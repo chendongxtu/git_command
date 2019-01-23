@@ -3,3 +3,30 @@
    随后根据提示可以删除你想删除的分支，如果想一次性全部清除，使用： git remote prune origin
    ***更简单的方法是使用这个命令，它在fetch之后删除掉没有与远程分支对应的本地分支：git fetch -p
    随后可以使用： git branch -a 来查看所有的远端分支
+
+2、放弃修改，回退到某个版本 git reset --hard {commit_id}
+   2.1 HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id
+      穿梭前，用：git log  可以查看提交历史，以便确定要回退到哪个版本
+      要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本
+   2.2 放弃所有修改，完全同步运程仓库
+      git reset --hard origin/master
+   2.3 在本地add之后，尚未commit之前，放弃本地的add
+      git reset HEAD {path}
+      此时修改仍然存在，需要撤销修改继续使用 git checkout -- .即可
+   2.4 本地commit之后，放弃修改
+      git reset --hard HEAD^ //回退到上一次commit的状态
+      git reset --hard {commit_id} // 回退到任一版本
+   2.5 移动快照：移动HEAD的指向，将其指向上一个快照。将HEAD移动后指向的快照回滚到暂存区（基本上没使用过）
+      git reset HEAD~  // 指向上一个提交的快照
+      git reset HEAD~10 // 返回到上10个快照
+      
+   2.6 git restet --soft
+      保留源码,只回退到commit 信息到某个版本.不涉及index的回退（也就是保留在add后的状态，没有commit）,如果还需要提交,直接commit即可.
+      如果是你自己的开发分支，多次提交，可以在最后merge了最新的master之后，一次性提交，省去rebase的麻烦
+   2.7 git reset --mixed
+      会保留源码,只是将git commit和index 信息回退到了某个版本，也就是相当于回退到你的当前工作区，你的修改都没有add
+      这是默认的git reset 模式
+
+3、 git revert 
+   git revert 撤销某次操作，此次操作之前和之后的 commit 和 history 都会保留，并且把这次撤销作为一次最新的提交。git revert是提交一个新的版本，将需要    revert的版本的内容再反向修改回去，版本会递增，不影响之前提交的内容
+   git revert HEAD~1会把Working Copy回退到服务器上的前一个版本
